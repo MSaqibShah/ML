@@ -1,11 +1,20 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 # # Notebook Imports and Packages
+
+
+
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 # # Example 1 : A Simple Cost Function 
 
 # ## $f(x) = x^2+x+1$
+
+
 
 
 def f(x):
@@ -14,8 +23,10 @@ def f(x):
 
 
 
+
 # Generating Data
 x_1 = np.linspace(start=-3, stop=3,num=500)
+
 
 
 
@@ -39,9 +50,12 @@ plt.show()
 
 
 
+
 # Slope for f(x)
 def df(x):
     return 2*x+1
+
+
 
 
 
@@ -93,7 +107,6 @@ plt.show()
 
 
 
-
 new_x = 3
 prev_x = 0 
 step_multiplier = 0.1 # parameter to set how big the step we take 
@@ -126,7 +139,8 @@ print("Cost at local min", f(new_x))
 
 
 
-# Plots
+
+# Plots 
 plt.figure(figsize=[20,5])
 
 # Plot 1
@@ -187,8 +201,296 @@ plt.plot( z_1, y_1, color="#000000")
 plt.show()
 
 
+# # Example 2 : Multiple Minima vs Initial Guess & Advance Functions
+# 
+# # $$g(x) = x^4-4x^2+5$$
 
 
+
+
+# Dummy Data
+
+x_2 = np.linspace(-2,2,1000)
+
+
+
+
+
+
+# Cost function
+def g(x):
+    return x**4-4*x*x+5
+
+#gradient of g(x)
+def dg(x):
+    return 4*(x**3)-8*x
+ 
+
+
+
+
+
+# Plotting 
+
+plt.figure(figsize=[15,5])
+plt.subplot(1,2,1)
+
+# Plot 1: Cost Function g(x)
+plt.xlim(-2,2)
+plt.ylim(0.5,6)
+
+plt.title("Plot 1: Cost Function g(x)", fontsize="17")
+plt.xlabel("x", fontsize="14")
+plt.ylabel("g(x)", fontsize="14")
+
+plt.plot(x_2,g(x_2),  linewidth=4, alpha=0.7)
+
+# Plot 2: Gradient or slope of Cost Function g(x)
+plt.subplot(1,2,2)
+plt.xlim(-2,2)
+plt.ylim(-6,8)
+
+plt.title("Plot 2: Gradient or slope of Cost Function g(x)", fontsize=17)
+plt.xlabel("x", fontsize="14")
+plt.ylabel("dg(x)", fontsize="14")
+plt.plot(x_2, dg(x_2))
+
+# Show Function
+plt.show()
+
+
+# ## Gradient Descent as a python function
+
+
+
+def grad_desc(derr_func, initial_guess, learning_rate=0.1, precision=0.000001):
+    new_x = initial_guess
+    prev_x = 0 
+    # step_multiplier = 0.1 # parameter to set how big the step we take 
+    # precision = 0.00000001 # parameter to set how precise we want the value to be
+    new_x_arr = [new_x]
+    slope_arr = [derr_func(new_x)]
+    for i in range(1000000):
+        prev_x = new_x
+        gradient = derr_func(prev_x)
+        new_x = prev_x - learning_rate * gradient
+
+        new_x_arr.append(new_x)
+        slope_arr.append(derr_func(new_x))
+
+
+        # Optiminzing by setting a accepted percision 
+        diff = abs(new_x-prev_x)
+        if(diff <= precision):
+          # print("The loop ran ", i, "number of times")
+            break
+    return new_x, new_x_arr, slope_arr 
+
+    # print("Local Minimiun: ", new_x)
+    # print("Slope at local min: ", df(new_x))
+    # print("Cost at local min", f(new_x))
+    
+
+
+
+
+
+local_min, list_x, derrv_x = grad_desc(dg,0.5)
+print("No. of times the Loop Ran: ", len(list_x))
+print("Local Minimum at: ", local_min)
+
+
+
+# Plotting 
+
+plt.figure(figsize=[15,5])
+plt.subplot(1,2,1)
+
+# Plot 1: Cost Function g(x)
+plt.xlim(-2,2)
+plt.ylim(0.5,6)
+
+plt.title("Plot 1: Cost Function g(x)", fontsize="17")
+plt.xlabel("x", fontsize="14")
+plt.ylabel("g(x)", fontsize="14")
+
+plt.plot(x_2,g(x_2),  linewidth=4, alpha=0.7)
+list_x_a = np.array(list_x) 
+plt.scatter(list_x, g(list_x_a), s=100, c="red", alpha=0.5)
+
+# Plot 2: Gradient or slope of Cost Function g(x)
+plt.subplot(1,2,2)
+plt.xlim(-2,2)
+plt.ylim(-6,8)
+
+plt.title("Plot 2: Gradient of Cost Function g(x)", fontsize=17)
+plt.xlabel("x", fontsize="14")
+plt.ylabel("dg(x)", fontsize="14")
+plt.plot(x_2, dg(x_2))
+
+zero_axis = np.linspace(0,0,len(x_2))
+y_axis = np.linspace(-7, 10, len(x_2))
+plt.plot(x_2, zero_axis, c="#000")
+plt.plot(zero_axis,y_axis , c="#000")
+plt.scatter(list_x, dg(list_x_a), s=100, c="red",alpha=0.5)
+plt.figtext(0.5, 0.01, "initial_guess=0.5, learning_rate=0.1, precision=1e-06)", ha="center", fontsize=18)
+
+# Show Function
+plt.show()
+
+
+
+
+local_min, list_x, derrv_x = grad_desc(dg,-0.5)
+print("No. of times the Loop Ran: ", len(list_x))
+print("Local Minimum at: ", local_min)
+
+
+# Plotting 
+
+plt.figure(figsize=[15,5])
+plt.subplot(1,2,1)
+
+# Plot 1: Cost Function g(x)
+plt.xlim(-2,2)
+plt.ylim(0.5,6)
+
+plt.title("Plot 1: Cost Function g(x)", fontsize="17")
+plt.xlabel("x", fontsize="14")
+plt.ylabel("g(x)", fontsize="14")
+
+plt.plot(x_2,g(x_2),  linewidth=4, alpha=0.7)
+list_x_a = np.array(list_x) 
+plt.scatter(list_x, g(list_x_a), s=100, c="red", alpha=0.5)
+
+# Plot 2: Gradient or slope of Cost Function g(x)
+plt.subplot(1,2,2)
+plt.xlim(-2,2)
+plt.ylim(-6,8)
+
+plt.title("Plot 2: Gradient of Cost Function g(x)", fontsize=17)
+plt.xlabel("x", fontsize="14")
+plt.ylabel("dg(x)", fontsize="14")
+plt.plot(x_2, dg(x_2))
+
+zero_axis = np.linspace(0,0,len(x_2))
+y_axis = np.linspace(-7, 10, len(x_2))
+plt.plot(x_2, zero_axis, c="#000")
+plt.plot(zero_axis,y_axis , c="#000")
+plt.scatter(list_x, dg(list_x_a), s=100, c="red",alpha=0.5)
+plt.figtext(0.5, 0.01, "initial_guess=-0.5, learning_rate=0.1, precision=1e-06)", ha="center", fontsize=18)
+
+# Show Function
+plt.show()
+
+
+
+
+local_min, list_x, derrv_x = grad_desc(dg,0.5, 0.2)
+print("No. of times the Loop Ran: ", len(list_x))
+print("Local Minimum at: ", local_min)
+
+
+
+# Plotting 
+
+plt.figure(figsize=[15,5])
+plt.subplot(1,2,1)
+
+# Plot 1: Cost Function g(x)
+plt.xlim(-2,2)
+plt.ylim(0.5,6)
+
+plt.title("Plot 1: Cost Function g(x)", fontsize="17")
+plt.xlabel("x", fontsize="14")
+plt.ylabel("g(x)", fontsize="14")
+
+plt.plot(x_2,g(x_2),  linewidth=4, alpha=0.7)
+list_x_a = np.array(list_x) 
+plt.scatter(list_x, g(list_x_a), s=100, c="red", alpha=0.5)
+
+# Plot 2: Gradient or slope of Cost Function g(x)
+plt.subplot(1,2,2)
+plt.xlim(-2,2)
+plt.ylim(-6,8)
+
+plt.title("Plot 2: Gradient of Cost Function g(x)", fontsize=17)
+plt.xlabel("x", fontsize="14")
+plt.ylabel("dg(x)", fontsize="14")
+plt.plot(x_2, dg(x_2))
+
+zero_axis = np.linspace(0,0,len(x_2))
+y_axis = np.linspace(-7, 10, len(x_2))
+plt.plot(x_2, zero_axis, c="#000")
+plt.plot(zero_axis,y_axis , c="#000")
+plt.scatter(list_x, dg(list_x_a), s=100, c="red",alpha=0.5)
+plt.figtext(0.5, 0.01, "initial_guess=0.5, learning_rate=0.2, precision=1e-06)", ha="center", fontsize=18)
+
+# Show Function
+plt.show()
+
+
+
+local_min, list_x, derrv_x = grad_desc(dg,0.5, 0.2,0.01)
+print("No. of times the Loop Ran: ", len(list_x))
+print("Local Minimum at: ", local_min)
+
+
+
+
+# Plotting 
+
+plt.figure(figsize=[15,5])
+plt.subplot(1,2,1)
+
+# Plot 1: Cost Function g(x)
+plt.xlim(-2,2)
+plt.ylim(0.5,6)
+
+plt.title("Plot 1: Cost Function g(x)", fontsize="17")
+plt.xlabel("x", fontsize="14")
+plt.ylabel("g(x)", fontsize="14")
+
+plt.plot(x_2,g(x_2),  linewidth=4, alpha=0.7)
+list_x_a = np.array(list_x) 
+plt.scatter(list_x, g(list_x_a), s=100, c="red", alpha=0.5)
+
+# Plot 2: Gradient or slope of Cost Function g(x)
+plt.subplot(1,2,2)
+plt.xlim(-2,2)
+plt.ylim(-6,8)
+
+plt.title("Plot 2: Gradient of Cost Function g(x)", fontsize=17)
+plt.xlabel("x", fontsize="14")
+plt.ylabel("dg(x)", fontsize="14")
+plt.plot(x_2, dg(x_2))
+
+zero_axis = np.linspace(0,0,len(x_2))
+y_axis = np.linspace(-7, 10, len(x_2))
+plt.plot(x_2, zero_axis, c="#000")
+plt.plot(zero_axis,y_axis , c="#000")
+plt.scatter(list_x, dg(list_x_a), s=100, c="red",alpha=0.5)
+plt.figtext(0.5, 0.01, "initial_guess=0.5, learning_rate=0.2, precision=0.01)", ha="center", fontsize=18)
+
+# Show Function
+plt.show()
+
+
+# # Example 3: Divergence and Overflow 
+# ## $$h(x) = x^5-2x^4+2$$
+
+
+
+# Dummy Data
+x_3 = np.linspace(-.25,2.5,1000)
+
+
+# Cost Function
+def h(x):
+    return x**5-2*x**4+2
+# Gradient of the functin
+def dh(x):
+    return 5*x**4-8*x**3
 
 
 
