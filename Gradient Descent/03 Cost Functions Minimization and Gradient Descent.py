@@ -263,14 +263,15 @@ plt.show()
 
 
 
-def grad_desc(derr_func, initial_guess, learning_rate=0.1, precision=0.000001):
+
+def grad_desc(derr_func, initial_guess, learning_rate=0.1, precision=0.000001,max_iter=300):
     new_x = initial_guess
     prev_x = 0 
     # step_multiplier = 0.1 # parameter to set how big the step we take 
     # precision = 0.00000001 # parameter to set how precise we want the value to be
     new_x_arr = [new_x]
     slope_arr = [derr_func(new_x)]
-    for i in range(1000000):
+    for i in range(max_iter):
         prev_x = new_x
         gradient = derr_func(prev_x)
         new_x = prev_x - learning_rate * gradient
@@ -298,6 +299,8 @@ def grad_desc(derr_func, initial_guess, learning_rate=0.1, precision=0.000001):
 local_min, list_x, derrv_x = grad_desc(dg,0.5)
 print("No. of times the Loop Ran: ", len(list_x))
 print("Local Minimum at: ", local_min)
+
+
 
 
 
@@ -341,9 +344,13 @@ plt.show()
 
 
 
+
 local_min, list_x, derrv_x = grad_desc(dg,-0.5)
 print("No. of times the Loop Ran: ", len(list_x))
 print("Local Minimum at: ", local_min)
+
+
+
 
 
 # Plotting 
@@ -386,9 +393,12 @@ plt.show()
 
 
 
+
 local_min, list_x, derrv_x = grad_desc(dg,0.5, 0.2)
 print("No. of times the Loop Ran: ", len(list_x))
 print("Local Minimum at: ", local_min)
+
+
 
 
 
@@ -431,9 +441,12 @@ plt.show()
 
 
 
+
+
 local_min, list_x, derrv_x = grad_desc(dg,0.5, 0.2,0.01)
 print("No. of times the Loop Ran: ", len(list_x))
 print("Local Minimum at: ", local_min)
+
 
 
 
@@ -481,8 +494,12 @@ plt.show()
 
 
 
+
 # Dummy Data
-x_3 = np.linspace(-.25,2.5,1000)
+x_3 = np.linspace(-2.5,2.5,1000)
+
+
+
 
 
 # Cost Function
@@ -491,6 +508,88 @@ def h(x):
 # Gradient of the functin
 def dh(x):
     return 5*x**4-8*x**3
+
+
+
+
+
+local_min, list_x, derrv_x = grad_desc(derr_func=dh,initial_guess=0.5, learning_rate=0.1,max_iter=500)
+print("No. of times the Loop Ran: ", len(list_x))
+print("Local Minimum at: ", local_min)
+
+
+
+
+
+# Plotting 
+
+plt.figure(figsize=[15,5])
+plt.subplot(1,2,1)
+
+# Plot 1: Cost Function g(x)
+plt.xlim(-1.2,2.5)
+plt.ylim(-1,4)
+
+plt.title("Plot 1: Cost Function h(x)", fontsize="17")
+plt.xlabel("x", fontsize="14")
+plt.ylabel("h(x)", fontsize="14")
+
+plt.plot(x_3,h(x_3),  linewidth=4, alpha=0.7)
+list_x_a = np.array(list_x) 
+plt.scatter(list_x, h(list_x_a), s=100, c="red", alpha=0.5)
+
+# Plot 2: Gradient or slope of Cost Function h(x)
+plt.subplot(1,2,2)
+plt.xlim(-1,2)
+plt.ylim(-4,5)
+
+plt.title("Plot 2: Gradient of Cost Function h(x)", fontsize=17)
+plt.xlabel("x", fontsize="14")
+plt.ylabel("dh(x)", fontsize="14")
+plt.plot(x_3, dh(x_3))
+
+zero_axis = np.linspace(0,0,len(x_2))
+y_axis = np.linspace(-7, 10, len(x_2))
+plt.plot(x_3, zero_axis, c="#000")
+plt.plot(zero_axis,y_axis , c="#000")
+plt.scatter(list_x, dh(list_x_a), s=100, c="red",alpha=0.5)
+
+# Show Function
+plt.show()
+
+
+# # Learning Rate and Its Effects
+
+
+
+
+n = 100
+
+# Running Gradient Descent 3 times with 3 values of gamma
+low_gamma = grad_desc(dg,3,0.0005, 0.0001,n)
+mid_gamma = grad_desc(dg,3,0.001, 0.0001,n)
+high_gamma = grad_desc(dg,3,0.002, 0.0001,max_iter=n)
+
+no_of_steps = list(range(0,n+1))
+
+plt.figure(figsize=[15,5])
+plt.xlim(0,n)
+plt.ylim(0,50)
+
+plt.title("Learning Rate and Step Size", fontsize="17")
+plt.xlabel("No of Iteration")
+plt.ylabel("g(x)")
+
+plt.plot(no_of_steps,g(np.array(low_gamma[1])), color="green")
+plt.scatter(no_of_steps,g(np.array(low_gamma[1])), s=60, color="green")
+
+plt.plot(no_of_steps,g(np.array(mid_gamma[1])))
+plt.scatter(no_of_steps,g(np.array(mid_gamma[1])), s=60)
+
+plt.plot(no_of_steps,g(np.array(high_gamma[1])))
+plt.scatter(no_of_steps,g(np.array(high_gamma[1])), s=60)
+
+
 
 
 
